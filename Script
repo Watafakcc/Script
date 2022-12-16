@@ -1,0 +1,1053 @@
+if game.PlaceId == 155615604 then
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("AidWare | Prison Life", "BloodTheme")
+-- Main
+local Main = Window:NewTab("GunMods")
+local MainSection = Main:NewSection("GunMods")
+MainSection:NewDropdown("Gives Guns n (Steals KeyCards)", "Gives the localplayer a gun", {"M9", "Remington 870", "AK-47", "Key card"}, function(v)
+	local A_1 = game:GetService("Workspace")["Prison_ITEMS"].giver[v].ITEMPICKUP
+	local Event = game:GetService("Workspace").Remote.ItemHandler
+	Event:InvokeServer(A_1)
+end)
+
+MainSection:NewDropdown("Gun Inf ammo...", "Makes the gun op", {"M9", "Remington 870", "AK-47"}, function(v)
+	local module = nil
+	if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(v) then
+		module = require(game:GetService("Players").LocalPlayer.Backpack[v].GunStates)
+	elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild(v) then
+		module = require(game:GetService("Players").LocalPlayer.Character[v].GunStates)
+	end
+	if module ~= nil then
+		module["MaxAmmo"] = math.huge
+		module["CurrentAmmo"] = math.huge
+		module["StoredAmmo"] = math.huge
+		module["Spread"] = 0
+		module["Range"] = math.huge
+		module["Bullets"] = 3
+		module["ReloadTime"] = 0.000001
+ 	end
+end)
+
+
+local Visual = Window:NewTab("Visuals")
+local VisualSection = Visual:NewSection("Visual")
+
+
+VisualSection:NewButton("Skeleton Esp", "Shows players bones Threw Walls", function()
+    local camera = workspace.CurrentCamera
+local entities = game:GetService("Players")
+local localplayer = entities.LocalPlayer 
+local runservice = game:GetService("RunService")
+
+local esp_settings = {
+enabled = true,
+skel = true,
+skel_col = Color3.fromRGB(255,255,255)
+}
+
+local function draw(player, character)
+
+local skel_head = Drawing.new("Line")
+skel_head.Visible = false
+skel_head.Thickness = 1.5
+skel_head.Color = Color3.new(1,1,1)
+
+local skel_torso = Drawing.new("Line")
+skel_torso.Visible = false
+skel_torso.Thickness = 1.5
+skel_torso.Color = Color3.new(1,1,1)
+
+local skel_leftarm = Drawing.new("Line")
+skel_leftarm.Visible = false
+skel_leftarm.Thickness = 1.5
+skel_leftarm.Color = Color3.new(1,1,1)
+
+local skel_rightarm = Drawing.new("Line")
+skel_rightarm.Visible = false
+skel_rightarm.Thickness = 1.5
+skel_rightarm.Color = Color3.new(1,1,1)
+
+local skel_leftleg = Drawing.new("Line")
+skel_leftleg.Visible = false
+skel_leftleg.Thickness = 1.5
+skel_leftleg.Color = Color3.new(1,1,1)
+
+local skel_rightleg = Drawing.new("Line")
+skel_rightleg.Visible = false
+skel_rightleg.Thickness = 1.5
+skel_rightleg.Color = Color3.new(1,1,1)
+
+local function update()
+    local connection
+    connection = runservice.RenderStepped:Connect(function()
+
+        if workspace:FindFirstChild(character.Name) and
+        character and 
+        character:FindFirstChild("HumanoidRootPart") and 
+        character:FindFirstChild("Humanoid") and 
+        character:FindFirstChild("Humanoid").Health ~= 0 then 
+
+            local character_rootpart_3d = character.HumanoidRootPart.Position
+            local character_rootpart_2d, rootpart_onscreen = camera:WorldToViewportPoint(character_rootpart_3d)
+
+            if rootpart_onscreen and character.Humanoid.RigType == Enum.HumanoidRigType.R6 and esp_settings.enabled then
+
+                local head_2d = camera:WorldToViewportPoint(character.Head.Position)
+                local torso_upper_2d = camera:WorldToViewportPoint(character.Torso.Position + Vector3.new(0,1,0))
+                local torso_lower_2d = camera:WorldToViewportPoint(character.Torso.Position + Vector3.new(0,-1,0))
+                
+                local leftarm_2d = camera:WorldToViewportPoint(character["Left Arm"].Position + Vector3.new(0,-1,0))
+                local rightarm_2d = camera:WorldToViewportPoint(character["Right Arm"].Position + Vector3.new(0,-1,0))
+                local leftleg_2d = camera:WorldToViewportPoint(character["Left Leg"].Position + Vector3.new(0,-1,0))
+                local rightleg_2d = camera:WorldToViewportPoint(character["Right Leg"].Position + Vector3.new(0,-1,0))
+
+                skel_head.From = Vector2.new(head_2d.X, head_2d.Y)
+                skel_head.To = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+
+                skel_torso.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                skel_torso.To = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+                
+                skel_leftarm.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                skel_leftarm.To = Vector2.new(leftarm_2d.X, leftarm_2d.Y)
+
+                skel_rightarm.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                skel_rightarm.To = Vector2.new(rightarm_2d.X, rightarm_2d.Y)
+
+                skel_leftleg.From = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+                skel_leftleg.To = Vector2.new(leftleg_2d.X, leftleg_2d.Y)
+
+                skel_rightleg.From = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+                skel_rightleg.To = Vector2.new(rightleg_2d.X, rightleg_2d.Y)
+
+                skel_head.Visible = esp_settings.skel
+                skel_torso.Visible = esp_settings.skel
+                skel_leftarm.Visible = esp_settings.skel
+                skel_rightarm.Visible = esp_settings.skel
+                skel_leftleg.Visible = esp_settings.skel
+                skel_rightleg.Visible = esp_settings.skel
+
+            else
+
+                skel_head.Visible = false
+                skel_torso.Visible = false
+                skel_leftarm.Visible = false
+                skel_rightarm.Visible = false
+                skel_leftleg.Visible = false
+                skel_rightleg.Visible = false
+
+            end
+
+        else
+
+            if player == nil then
+                connection:Disconnect()
+                connection = nil 
+            end
+
+            skel_head.Visible = false
+            skel_torso.Visible = false
+            skel_leftarm.Visible = false
+            skel_rightarm.Visible = false
+            skel_leftleg.Visible = false
+            skel_rightleg.Visible = false
+
+        end
+    end)
+end
+coroutine.wrap(update)()
+
+end
+
+local function playeradded(player)
+if player.Character then
+    coroutine.wrap(draw)(player, player.Character)
+end
+player.CharacterAdded:Connect(function(character)
+    coroutine.wrap(draw)(player, character)
+end)
+end
+
+for a,b in next, entities:GetPlayers() do
+if b ~= localplayer then
+    playeradded(b)
+end
+end
+
+entities.PlayerAdded:Connect(playeradded)
+
+end)
+
+VisualSection:NewButton("Name Esp", "Shows Players Names", function()
+	--- Tut
+
+	local esp_settings = { ---- table for esp settings 
+		textsize = 8,
+		colour = 255,255,255
+	}
+	
+	local gui = Instance.new("BillboardGui")
+	local esp = Instance.new("TextLabel",gui) ---- new instances to make the billboard gui and the textlabel
+	
+	
+	
+	gui.Name = "Cracked esp"; ---- properties of the esp
+	gui.ResetOnSpawn = false
+	gui.AlwaysOnTop = true;
+	gui.LightInfluence = 0;
+	gui.Size = UDim2.new(1.75, 0, 1.75, 0);
+	esp.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	esp.Text = ""
+	esp.Size = UDim2.new(0.0001, 0.00001, 0.0001, 0.00001);
+	esp.BorderSizePixel = 4;
+	esp.BorderColor3 = Color3.new(esp_settings.colour)
+	esp.BorderSizePixel = 0
+	esp.Font = "GothamSemibold"
+	esp.TextSize = esp_settings.textsize
+	esp.TextColor3 = Color3.fromRGB(esp_settings.colour) -- text colour
+	
+	game:GetService("RunService").RenderStepped:Connect(function() ---- loops faster than a while loop :)
+		for i,v in pairs (game:GetService("Players"):GetPlayers()) do
+			if v ~= game:GetService("Players").LocalPlayer and v.Character.Head:FindFirstChild("Cracked esp")==nil and v.TeamColor ~= game:GetService("Players").LocalPlayer.TeamColor then -- craeting checks for team check, local player etc
+				esp.Text = "{"..v.Name.."}"
+				gui:Clone().Parent = v.Character.Head
+		end
+	end
+	end)
+end)
+
+VisualSection:NewSlider("Fov Changer", "Changes Players Field Of View", 120, 30, function(v) 
+    workspace.CurrentCamera.FieldOfView = v
+    print("FOV is [v] ")
+end)
+
+
+-- Player
+local Player = Window:NewTab("Player")
+local PlayerSection = Player:NewSection("Player")
+
+-- sliders
+PlayerSection:NewSlider("WalkSpeed", "Changes Player WalkSpeed", 250, 16, function(v)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+end)
+
+PlayerSection:NewSlider("JumpPower", "Makes Player Jump Higher", 250, 50, function(v) 
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = v
+end)
+
+
+-- Teleports
+local Teleport = Window:NewTab("Teleports")
+local TeleportSection = Teleport:NewSection("Teleports")
+
+TeleportSection:NewButton("Criminal Base", "Teleports to criminal base", function ()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-946.867676, 94.1287613, 2067.92749, 0.999742091, 4.25626148e-08, 0.0227096807, -4.45782611e-08, 1, 8.82509141e-08, -0.0227096807, -8.92405154e-08, 0.999742091)
+end)
+
+TeleportSection:NewButton("Police Room", "Teleports to Police Room", function ()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(821.764099, 99.9899826, 2262.73975, 0.999963284, 3.54120999e-08, -0.00856971461, -3.51444704e-08, 1, 3.13803596e-08, 0.00856971461, -3.10780273e-08, 0.999963284)
+end)
+
+TeleportSection:NewButton("Yard Tower", "Teleports to Yard Tower", function ()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(823.114014, 130.039902, 2589.17139, 0.999749541, -2.75148189e-08, 0.0223805867, 2.84056068e-08, 1, -3.94839361e-08, -0.0223805867, 4.01097822e-08, 0.999749541)
+end)
+
+TeleportSection:NewButton("Downtown", "Teleports to Downtown", function ()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-326.843597, 54.5750275, 1773.35425, 0.596451998, 6.43609539e-08, -0.802648723, -4.075088e-08, 1, 4.99035302e-08, 0.802648723, 2.94358182e-09, 0.596451998)
+end)
+
+local Misc = Window:NewTab("Misc")
+local MiscSection = Misc:NewSection("Misc")
+
+
+
+MiscSection:NewButton("ArrestAll", "Arrest all prisioners", function ()
+	for i, v in pairs(game.Teams.Criminals:GetPlayers()) do
+		if v.Name ~= game.Players.LocalPlayer.Name then
+			local inp = 10
+			repeat
+				wait()
+				inp = inp-1
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+                		game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart)
+			until inp == 0
+		end
+	end
+end)
+
+
+
+
+
+elseif game.PlaceId == 3956818381 then
+    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+    local Window = Library.CreateLib("AidWare | Ninja Legends", "BloodTheme")
+ 
+    -- MAIN
+    local Main = Window:NewTab("Autofarm")
+    local MainSection = Main:NewSection("Autofarm")
+ 
+    MainSection:NewToggle("Auto Swing", "Make your player autoswing", function(v)
+        getgenv().autoswing = v
+        while true do
+            if not getgenv().autoswing then return end
+            for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                if v:FindFirstChild("ninjitsuGain") then
+                    game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+                    break
+                end
+            end
+            local A_1 = "swingKatana"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1)
+            wait(0.1)
+        end
+    end)
+ 
+    MainSection:NewToggle("Auto Sell", "Makes your player autosell", function(v)
+        getgenv().autosell = v
+        while true do
+            if getgenv().autoswing == false then return end
+            game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            wait(0.1)
+            game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = CFrame.new(0,0,0)
+            wait(0.1)
+        end
+    end)
+
+	local Misc = Window:NewTab("Misc")
+    local MiscSection = Misc:NewSection("Misc")
+
+    MiscSection:NewButton("Unlock all islands", "Unlocks all islands", function()
+        local oldcframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        for _,v in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+            wait(0.1)
+        end
+        wait(0.1)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldcframe
+    end)
+    
+    MiscSection:NewToggle("Auto buy all swords", "Auto buys all swords", function(v)
+        getgenv().buyswords = v
+        while true do
+            if not getgenv().buyswords then return end
+            local A_1 = "buyAllSwords"
+            local A_2 = "Inner Peace Island"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, A_2)
+            wait(0.5)
+        end
+    end)
+ 
+    MiscSection:NewToggle("Auto buy all belts", "Auto buys all belts", function(v)
+        getgenv().buybelts = v
+        while true do
+            if not getgenv().buybelts then return end
+            local A_1 = "buyAllBelts"
+            local A_2 = "Inner Peace Island"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, A_2)
+            wait(0.5)
+        end
+    end)
+
+
+
+    MiscSection:NewSlider("Fov Changer", "Changes Players Field Of View", 120, 30, function(v) 
+        workspace.CurrentCamera.FieldOfView = v
+        print("FOV is [v] ")
+    end)
+end
+
+if game.PlaceId == 286090429 then
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("AidWare | Arsenal", "BloodTheme")
+
+
+local Aimbot = Window:NewTab("Aimbot")
+local AimSection = Aimbot:NewSection("AIMBOT")
+
+AimSection:NewButton("Aimlock", "Locks On To players head withing fov circle", function ()
+    local dwCamera = workspace.CurrentCamera
+	local dwRunService = game:GetService("RunService")
+	local dwUIS = game:GetService("UserInputService")
+	local dwEntities = game:GetService("Players")
+	local dwLocalPlayer = dwEntities.LocalPlayer
+	local dwMouse = dwLocalPlayer:GetMouse()
+
+	local settings = {
+		Aimbot = true,
+		Aiming = false,
+		Aimbot_AimPart = "Head",
+		Aimbot_TeamCheck = true,
+		Aimbot_Draw_FOV = true,
+		Aimbot_FOV_Radius = 110,
+		Aimbot_FOV_Color = Color3.fromRGB(255,255,255)
+	}
+
+	local fovcircle = Drawing.new("Circle")
+	fovcircle.Visible = settings.Aimbot_Draw_FOV
+	fovcircle.Radius = settings.Aimbot_FOV_Radius
+	fovcircle.Color = settings.Aimbot_FOV_Color
+	fovcircle.Thickness = 1
+	fovcircle.Filled = false
+	fovcircle.Transparency = 1
+
+	fovcircle.Position = Vector2.new(dwCamera.ViewportSize.X / 2, dwCamera.ViewportSize.Y / 2)
+
+	dwUIS.InputBegan:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton2 then
+			settings.Aiming = true
+		end
+	end)
+
+	dwUIS.InputEnded:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton2 then
+			settings.Aiming = false
+		end
+	end)
+
+	dwRunService.RenderStepped:Connect(function()
+
+		local dist = math.huge
+		local closest_char = nil
+
+		if settings.Aiming then
+
+			for i,v in next, dwEntities:GetChildren() do 
+
+				if v ~= dwLocalPlayer and
+					v.Character and
+					v.Character:FindFirstChild("HumanoidRootPart") and
+					v.Character:FindFirstChild("Humanoid") and
+					v.Character:FindFirstChild("Humanoid").Health > 0 then
+
+					if settings.Aimbot_TeamCheck == true and
+						v.Team ~= dwLocalPlayer.Team or
+						settings.Aimbot_TeamCheck == false then
+
+						local char = v.Character
+						local char_part_pos, is_onscreen = dwCamera:WorldToViewportPoint(char[settings.Aimbot_AimPart].Position)
+
+						if is_onscreen then
+
+							local mag = (Vector2.new(dwMouse.X, dwMouse.Y) - Vector2.new(char_part_pos.X, char_part_pos.Y)).Magnitude
+
+							if mag < dist and mag < settings.Aimbot_FOV_Radius then
+
+								dist = mag
+								closest_char = char
+
+							end
+						end
+					end
+				end
+			end
+
+			if closest_char ~= nil and
+				closest_char:FindFirstChild("HumanoidRootPart") and
+				closest_char:FindFirstChild("Humanoid") and
+				closest_char:FindFirstChild("Humanoid").Health > 0 then
+
+				dwCamera.CFrame = CFrame.new(dwCamera.CFrame.Position, closest_char[settings.Aimbot_AimPart].Position)
+			end
+		end
+	end)
+end)
+
+AimSection:NewButton("SilentAim", "Bullets Magicly Fly at the player in fov circle", function ()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/kinhey/scripts/main/arsenal_silent_aim.lua"))()
+    circle1.Radius = 150 
+end)
+
+AimSection:NewButton("Trigger bot", "Auto Fires When player is on crosshair", function ()
+    local player = game:GetService("Players").LocalPlayer
+	local mouse = player:GetMouse()
+	game:GetService("RunService").RenderStepped:Connect(function()
+		if mouse.Target.Parent:FindFirstChild("Humanoid") and mouse.Target.Parent.Name ~= player.Name then
+			mouse1press() wait() mouse1release()
+		end
+	end)
+end)
+
+
+local Esp = Window:NewTab("Esp")
+local EspSection = Esp:NewSection("ESP")
+
+
+EspSection:NewButton("Box esp", "Places Bounding Boxes Around Players", function ()
+    local lplr = game.Players.LocalPlayer
+	local camera = game:GetService("Workspace").CurrentCamera
+	local CurrentCamera = workspace.CurrentCamera
+	local worldToViewportPoint = CurrentCamera.worldToViewportPoint
+
+	local HeadOff = Vector3.new(0, 0.5, 0)
+	local LegOff = Vector3.new(0,3,0)
+
+	for i,v in pairs(game.Players:GetChildren()) do
+		local BoxOutline = Drawing.new("Square")
+		BoxOutline.Visible = false
+		BoxOutline.Color = Color3.new(0,0,0)
+		BoxOutline.Thickness = 3
+		BoxOutline.Transparency = 1
+		BoxOutline.Filled = false
+
+		local Box = Drawing.new("Square")
+		Box.Visible = false
+		Box.Color = Color3.new(1,1,1)
+		Box.Thickness = 1
+		Box.Transparency = 1
+		Box.Filled = false
+
+		function boxesp()
+			game:GetService("RunService").RenderStepped:Connect(function()
+				if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+					local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+
+					local RootPart = v.Character.HumanoidRootPart
+					local Head = v.Character.Head
+					local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+					local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+					local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+
+					if onScreen then
+						BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+						BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+						BoxOutline.Visible = true
+
+						Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+						Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+						Box.Visible = true
+
+						if v.TeamColor == lplr.TeamColor then
+							BoxOutline.Visible = false
+							Box.Visible = false
+						else
+							BoxOutline.Visible = true
+							Box.Visible = true
+						end
+
+					else
+						BoxOutline.Visible = false
+						Box.Visible = false
+					end
+				else
+					BoxOutline.Visible = false
+					Box.Visible = false
+				end
+			end)
+		end
+		coroutine.wrap(boxesp)()
+	end
+end)
+
+EspSection:NewButton("Cham esp(No TeamCheck)", "Player Models Become Neon Threw walls", function ()
+    local dwEntities = game:GetService("Players")
+		local dwLocalPlayer = dwEntities.LocalPlayer 
+		local dwRunService = game:GetService("RunService")
+
+		local settings_tbl = {
+			ESP_Enabled = true,
+			ESP_TeamCheck = false,
+			Chams = true,
+			Chams_Color = Color3.fromRGB(0,0,255),
+			Chams_Transparency = 0.1,
+			Chams_Glow_Color = Color3.fromRGB(255,0,0)
+		}
+
+		function destroy_chams(char)
+
+			for k,v in next, char:GetChildren() do 
+
+				if v:IsA("BasePart") and v.Transparency ~= 1 then
+
+					if v:FindFirstChild("Glow") and 
+						v:FindFirstChild("Chams") then
+
+						v.Glow:Destroy()
+						v.Chams:Destroy() 
+
+					end 
+
+				end 
+
+			end 
+
+		end
+
+		dwRunService.Heartbeat:Connect(function()
+
+			if settings_tbl.ESP_Enabled then
+
+				for k,v in next, dwEntities:GetPlayers() do 
+
+					if v ~= dwLocalPlayer then
+
+						if v.Character and
+							v.Character:FindFirstChild("HumanoidRootPart") and 
+							v.Character:FindFirstChild("Humanoid") and 
+							v.Character:FindFirstChild("Humanoid").Health ~= 0 then
+
+							if settings_tbl.ESP_TeamCheck == false then
+
+								local char = v.Character 
+
+								for k,b in next, char:GetChildren() do 
+
+									if b:IsA("BasePart") and 
+										b.Transparency ~= 1 then
+
+										if settings_tbl.Chams then
+
+											if not b:FindFirstChild("Glow") and
+												not b:FindFirstChild("Chams") then
+
+												local chams_box = Instance.new("BoxHandleAdornment", b)
+												chams_box.Name = "Chams"
+												chams_box.AlwaysOnTop = true 
+												chams_box.ZIndex = 4 
+												chams_box.Adornee = b 
+												chams_box.Color3 = settings_tbl.Chams_Color
+												chams_box.Transparency = settings_tbl.Chams_Transparency
+												chams_box.Size = b.Size + Vector3.new(0.02, 0.02, 0.02)
+
+												local glow_box = Instance.new("BoxHandleAdornment", b)
+												glow_box.Name = "Glow"
+												glow_box.AlwaysOnTop = false 
+												glow_box.ZIndex = 3 
+												glow_box.Adornee = b 
+												glow_box.Color3 = settings_tbl.Chams_Glow_Color
+												glow_box.Size = chams_box.Size + Vector3.new(0.13, 0.13, 0.13)
+
+											end
+
+										else
+
+											destroy_chams(char)
+
+										end
+
+									end
+
+								end
+
+							else
+
+								if v.Team == dwLocalPlayer.Team then
+									destroy_chams(v.Character)
+								end
+
+							end
+
+						else
+
+							destroy_chams(v.Character)
+
+						end
+
+					end
+
+				end
+
+			else 
+
+				for k,v in next, dwEntities:GetPlayers() do 
+
+					if v ~= dwLocalPlayer and 
+						v.Character and 
+						v.Character:FindFirstChild("HumanoidRootPart") and 
+						v.Character:FindFirstChild("Humanoid") and 
+						v.Character:FindFirstChild("Humanoid").Health ~= 0 then
+
+						destroy_chams(v.Character)
+
+					end
+
+				end
+
+			end
+
+		end)
+end)
+
+EspSection:NewButton("Name Esp", "Shows Players Names", function()
+	--- Tut
+
+	local esp_settings = { ---- table for esp settings 
+		textsize = 8,
+		colour = 255,255,255
+	}
+	
+	local gui = Instance.new("BillboardGui")
+	local esp = Instance.new("TextLabel",gui) ---- new instances to make the billboard gui and the textlabel
+	
+	
+	
+	gui.Name = "Cracked esp"; ---- properties of the esp
+	gui.ResetOnSpawn = false
+	gui.AlwaysOnTop = true;
+	gui.LightInfluence = 0;
+	gui.Size = UDim2.new(1.75, 0, 1.75, 0);
+	esp.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	esp.Text = ""
+	esp.Size = UDim2.new(0.0001, 0.00001, 0.0001, 0.00001);
+	esp.BorderSizePixel = 4;
+	esp.BorderColor3 = Color3.new(esp_settings.colour)
+	esp.BorderSizePixel = 0
+	esp.Font = "GothamSemibold"
+	esp.TextSize = esp_settings.textsize
+	esp.TextColor3 = Color3.fromRGB(esp_settings.colour) -- text colour
+	
+	game:GetService("RunService").RenderStepped:Connect(function() ---- loops faster than a while loop :)
+		for i,v in pairs (game:GetService("Players"):GetPlayers()) do
+			if v ~= game:GetService("Players").LocalPlayer and v.Character.Head:FindFirstChild("Cracked esp")==nil and v.TeamColor ~= game:GetService("Players").LocalPlayer.TeamColor then -- craeting checks for team check, local player etc
+				esp.Text = "{"..v.Name.."}"
+				gui:Clone().Parent = v.Character.Head
+		end
+	end
+	end)
+end)
+
+
+
+
+local Misc = Window:NewTab("Misc")
+local MiscSection = Misc:NewSection("MISC")
+
+
+MiscSection:NewSlider("Spec Fov", "Changes Players Field Of View while spectating", 120, 30, function(v) 
+    workspace.CurrentCamera.FieldOfView = v
+    print("FOV UPDATED [v] ")
+end)
+
+
+MiscSection:NewButton("Fly(E)", "Enables Fly When Keybind (e) is pressed", function ()
+	-- Press E to toggle
+
+repeat wait()
+until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("UpperTorso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid")
+local mouse = game.Players.LocalPlayer:GetMouse()
+repeat wait() until mouse
+local plr = game.Players.LocalPlayer
+local UpperTorso = plr.Character.UpperTorso
+local flying = true
+local deb = true
+local ctrl = {f = 0, b = 0, l = 0, r = 0}
+local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+local maxspeed = 50
+local speed = 0
+
+function Fly()
+local bg = Instance.new("BodyGyro", UpperTorso)
+bg.P = 9e4
+bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+bg.cframe = UpperTorso.CFrame
+local bv = Instance.new("BodyVelocity", UpperTorso)
+bv.velocity = Vector3.new(0,0.1,0)
+bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+repeat wait()
+plr.Character.Humanoid.PlatformStand = true
+if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+speed = speed+.5+(speed/maxspeed)
+if speed > maxspeed then
+speed = maxspeed
+end
+elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+speed = speed-1
+if speed < 0 then
+speed = 0
+end
+end
+if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+else
+bv.velocity = Vector3.new(0,0.1,0)
+end
+bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+until not flying
+ctrl = {f = 0, b = 0, l = 0, r = 0}
+lastctrl = {f = 0, b = 0, l = 0, r = 0}
+speed = 0
+bg:Destroy()
+bv:Destroy()
+plr.Character.Humanoid.PlatformStand = false
+end
+mouse.KeyDown:connect(function(key)
+if key:lower() == "e" then
+if flying then flying = false
+else
+flying = true
+Fly()
+end
+elseif key:lower() == "w" then
+ctrl.f = 1
+elseif key:lower() == "s" then
+ctrl.b = -1
+elseif key:lower() == "a" then
+ctrl.l = -1
+elseif key:lower() == "d" then
+ctrl.r = 1
+end
+end)
+mouse.KeyUp:connect(function(key)
+if key:lower() == "w" then
+ctrl.f = 0
+elseif key:lower() == "s" then
+ctrl.b = 0
+elseif key:lower() == "a" then
+ctrl.l = 0
+elseif key:lower() == "d" then
+ctrl.r = 0
+end
+end)
+Fly()
+end)
+
+end
+
+
+
+if game.PlaceId == 606839621 then
+	local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+	local Window = Library.CreateLib("AidWare | JailBrake", "BloodTheme")
+
+
+
+	local Visuals = Window:NewTab("Esp")
+    local VisualsSection = Visuals:NewSection("ESP")
+
+	VisualsSection:NewButton("Box esp", "Places Bounding Boxes Around Players", function ()
+		local lplr = game.Players.LocalPlayer
+		local camera = game:GetService("Workspace").CurrentCamera
+		local CurrentCamera = workspace.CurrentCamera
+		local worldToViewportPoint = CurrentCamera.worldToViewportPoint
+	
+		local HeadOff = Vector3.new(0, 0.5, 0)
+		local LegOff = Vector3.new(0,3,0)
+	
+		for i,v in pairs(game.Players:GetChildren()) do
+			local BoxOutline = Drawing.new("Square")
+			BoxOutline.Visible = false
+			BoxOutline.Color = Color3.new(0,0,0)
+			BoxOutline.Thickness = 3
+			BoxOutline.Transparency = 1
+			BoxOutline.Filled = false
+	
+			local Box = Drawing.new("Square")
+			Box.Visible = false
+			Box.Color = Color3.new(1,1,1)
+			Box.Thickness = 1
+			Box.Transparency = 1
+			Box.Filled = false
+	
+			function boxesp()
+				game:GetService("RunService").RenderStepped:Connect(function()
+					if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+						local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+	
+						local RootPart = v.Character.HumanoidRootPart
+						local Head = v.Character.Head
+						local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+						local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+						local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+	
+						if onScreen then
+							BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+							BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+							BoxOutline.Visible = true
+	
+							Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+							Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+							Box.Visible = true
+	
+							if v.TeamColor == lplr.TeamColor then
+								BoxOutline.Visible = false
+								Box.Visible = false
+							else
+								BoxOutline.Visible = true
+								Box.Visible = true
+							end
+	
+						else
+							BoxOutline.Visible = false
+							Box.Visible = false
+						end
+					else
+						BoxOutline.Visible = false
+						Box.Visible = false
+					end
+				end)
+			end
+			coroutine.wrap(boxesp)()
+		end
+	end)
+
+
+	VisualsSection:NewButton("BriefCase Esp", "Shows airdrop Briefcasees", function ()
+		local camera = workspace.CurrentCamera
+
+local function DrawDrop(drop)
+
+    local DropText = Drawing.new("Text")
+    DropText.Visible = false
+    DropText.Center = true
+    DropText.Outline = true
+    DropText.Font = 2
+    DropText.Size = 13
+    DropText.Color = Color3.new(1,1,1) --> or any color, using FromRGB
+    DropText.Text = "Drop"
+
+    local function UPDATER()
+        local c
+        c = game:GetService("RunService").RenderStepped:Connect(function()
+            if drop and workspace:FindFirstChild(drop.Name) and drop:FindFirstChild("Briefcase") then
+                
+                local dropvector, onscreen = camera:WorldToViewportPoint(drop.Briefcase.Position)
+
+                if onscreen then
+                    DropText.Position = Vector2.new(dropvector.X, dropvector.Y)
+                    DropText.Visible = true
+                else
+                    DropText.Visible = false
+                end
+
+            else
+
+                if game:GetService("Workspace"):FindFirstChild(drop.Name) == nil then
+                    c:Disconnect()
+                end
+
+                DropText.Visible = false
+            
+            end
+        end)
+    end
+    coroutine.wrap(UPDATER)()
+end
+
+for i,drop in pairs(workspace:GetChildren()) do
+    if drop.Name == "Drop" then
+        if drop:FindFirstChild("Briefcase") then
+            coroutine.wrap(DrawDrop)(drop)
+        end
+    end
+end
+
+workspace.ChildAdded:Connect(function(drop)
+    if drop.Name == "Drop" then
+        if drop:FindFirstChild("Briefcase") then
+            coroutine.wrap(DrawDrop)(drop)
+        end
+    end
+end)
+	end)
+
+
+	local Player = Window:NewTab("Player")
+    local PlayerSection = Player:NewSection("PLAYER")
+
+	PlayerSection:NewButton("Fly(E)", "Enables Fly use E to toggle", function ()
+		-- Press E to toggle
+
+repeat wait()
+until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("UpperTorso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid")
+local mouse = game.Players.LocalPlayer:GetMouse()
+repeat wait() until mouse
+local plr = game.Players.LocalPlayer
+local UpperTorso = plr.Character.UpperTorso
+local flying = true
+local deb = true
+local ctrl = {f = 0, b = 0, l = 0, r = 0}
+local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+local maxspeed = 50
+local speed = 0
+
+function Fly()
+local bg = Instance.new("BodyGyro", UpperTorso)
+bg.P = 9e4
+bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+bg.cframe = UpperTorso.CFrame
+local bv = Instance.new("BodyVelocity", UpperTorso)
+bv.velocity = Vector3.new(0,0.1,0)
+bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+repeat wait()
+plr.Character.Humanoid.PlatformStand = true
+if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+speed = speed+.5+(speed/maxspeed)
+if speed > maxspeed then
+speed = maxspeed
+end
+elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+speed = speed-1
+if speed < 0 then
+speed = 0
+end
+end
+if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+else
+bv.velocity = Vector3.new(0,0.1,0)
+end
+bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+until not flying
+ctrl = {f = 0, b = 0, l = 0, r = 0}
+lastctrl = {f = 0, b = 0, l = 0, r = 0}
+speed = 0
+bg:Destroy()
+bv:Destroy()
+plr.Character.Humanoid.PlatformStand = false
+end
+mouse.KeyDown:connect(function(key)
+if key:lower() == "e" then
+if flying then flying = false
+else
+flying = true
+Fly()
+end
+elseif key:lower() == "w" then
+ctrl.f = 1
+elseif key:lower() == "s" then
+ctrl.b = -1
+elseif key:lower() == "a" then
+ctrl.l = -1
+elseif key:lower() == "d" then
+ctrl.r = 1
+end
+end)
+mouse.KeyUp:connect(function(key)
+if key:lower() == "w" then
+ctrl.f = 0
+elseif key:lower() == "s" then
+ctrl.b = 0
+elseif key:lower() == "a" then
+ctrl.l = 0
+elseif key:lower() == "d" then
+ctrl.r = 0
+end
+end)
+Fly()
+	end)
+
+
+	local Vehicle = Window:NewTab("Vehicle")
+    local VehicleFarmSection = AutoFarm:NewSection("Vehicle")
+
+	VehicleFarmSection:NewButton("CarJump(Z)", "Car jumpes when keybind(Z) is pressed", function ()
+		local plr = game:GetService"Players".LocalPlayer
+local m = plr:GetMouse()
+m.KeyDown:connect(function(k)
+if k == "z" then
+game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+wait()
+game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Seated")
+end
+end)
+
+	end)
+end
